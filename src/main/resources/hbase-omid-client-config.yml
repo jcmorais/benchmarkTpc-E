@@ -2,10 +2,10 @@
 #commitTableName: OMID_COMMIT_TABLE
 
 #TSO/HA connection
-omidClientConfiguration: !!org.apache.omid.tso.client.OmidClientConfiguration [ ]
+#omidClientConfiguration: !!org.apache.omid.tso.client.OmidClientConfiguration [ ]
 
-#omidClientConfiguration: !!org.apache.omid.tso.client.OmidClientConfiguration
-  #connectionString: "192.168.112.57:54758"
+omidClientConfiguration: !!org.apache.omid.tso.client.OmidClientConfiguration
+  connectionString: "192.168.112.57:54758"
   #connectionType: DIRECT
   #zkCurrentTsoPath
   #zkNamespace
@@ -14,7 +14,7 @@ omidClientConfiguration: !!org.apache.omid.tso.client.OmidClientConfiguration [ 
   #requestTimeoutInMs
   #reconnectionDelayInSecs
   #retryDelayInMs
-  #executorThreads: 4
+  executorThreads: 4
   #postCommitMode: ASYNC
 
 

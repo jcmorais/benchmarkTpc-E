@@ -4,7 +4,7 @@
 transactions: true
 
 #create HBase tables of TPC-E
-createTables: true
+createTables: false
 
 #parse file or load serialized data
 loadFromXML: false
@@ -15,7 +15,7 @@ loadFromSerialized: true
 loadPath: files/serialized/
 
 filesList:
-  - testeMedium.dat
+  - binlog_1.dat
 
 threadPool: 35
 

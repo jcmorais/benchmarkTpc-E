@@ -2,13 +2,13 @@
 
 
     <!-- Local HBase -->
-    <property>
+    <!--property>
         <name>hbase.zookeeper.quorum</name>
         <value>localhost</value>
-    </property>
+    </property-->
 
 
-    <!--property>
+    <property>
         <name>hbase.zookeeper.quorum</name>
         <value>192.168.112.50</value>
     </property>
@@ -21,7 +21,7 @@
     <property>
         <name>hbase.master</name>
         <value>192.168.112.50:60000</value>
-    </property-->
+    </property>
 
 
 
