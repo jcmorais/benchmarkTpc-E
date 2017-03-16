@@ -1,0 +1,34 @@
+#HBase related
+#commitTableName: OMID_COMMIT_TABLE
+
+#TSO/HA connection
+omidClientConfiguration: !!org.apache.omid.tso.client.OmidClientConfiguration [ ]
+
+#omidClientConfiguration: !!org.apache.omid.tso.client.OmidClientConfiguration
+  #connectionString: "192.168.112.57:54758"
+  #connectionType: DIRECT
+  #zkCurrentTsoPath
+  #zkNamespace
+  #zkConnectionTimeoutInSecs
+  #requestMaxRetries
+  #requestTimeoutInMs
+  #reconnectionDelayInSecs
+  #retryDelayInMs
+  #executorThreads: 4
+  #postCommitMode: ASYNC
+
+
+#Instrumentation
+#metrics: !!org.apache.omid.metrics.NullMetricsProvider [ ]
+
+#metrics: !!org.apache.omid.metrics.CodahaleMetricsProvider [
+#    !!org.apache.omid.metrics.CodahaleMetricsConfig {
+#        outputFreqInSecs: 1,
+#        reporters: !!set {
+#            !!org.apache.omid.metrics.CodahaleMetricsConfig$Reporter SLF4J,
+#            !!org.apache.omid.metrics.CodahaleMetricsConfig$Reporter CONSOLE
+#            },
+#        csvDir: "some/folder",
+#        prefix: "somePrefix"
+#      }
+#]

@@ -1,0 +1,21 @@
+
+#to-do warm
+# if false run only with HBase
+transactions: true
+
+#create HBase tables of TPC-E
+createTables: true
+
+#parse file or load serialized data
+loadFromXML: false
+
+#load serialized trace file if exists
+loadFromSerialized: true
+
+loadPath: files/serialized/
+
+filesList:
+  - testeMedium.dat
+
+threadPool: 35
+
