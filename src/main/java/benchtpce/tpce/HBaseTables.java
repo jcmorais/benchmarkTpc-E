@@ -24,19 +24,16 @@ public class HBaseTables {
         TableName tableName;
 
         try {
-            Connection conn = ConnectionFactory.createConnection(config);
-            Admin admin = conn.getAdmin();
+            HBaseAdmin admin = new HBaseAdmin(config);
             TpcE tpcE = new TpcE();
 
             //first delete the tables if they exist
             for (String t : tpcE.tablesColumns.keySet()) {
                 tableName = TableName.valueOf(t);
-                if(admin.tableExists(tableName)){
-
+                if(admin.tableExists(t)){
                     try {
                         admin.disableTable(tableName);
-                    } catch (TableNotEnabledException e) {
-                    }
+                    } catch (TableNotEnabledException e) {}
                     admin.deleteTable(tableName);
                 }
             }
@@ -54,8 +51,7 @@ public class HBaseTables {
             logger.info("Creating the Tpc-E tables in HBase...");
             this.deleteTables(config);
 
-            Connection conn = ConnectionFactory.createConnection(config);
-            Admin admin = conn.getAdmin();
+            HBaseAdmin admin = new HBaseAdmin(config);
             TpcE tpcE = new TpcE();
 
             for (String t : tpcE.tablesColumns.keySet()) {
