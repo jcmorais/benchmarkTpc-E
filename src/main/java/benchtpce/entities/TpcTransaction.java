@@ -1,10 +1,8 @@
 package benchtpce.entities;
 
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.TableName;
-import org.apache.hadoop.hbase.client.Connection;
-import org.apache.hadoop.hbase.client.Delete;
-import org.apache.hadoop.hbase.client.Put;
-import org.apache.hadoop.hbase.client.Table;
+import org.apache.hadoop.hbase.client.*;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.omid.transaction.TTable;
 import org.apache.omid.transaction.Transaction;
@@ -216,7 +214,7 @@ public class TpcTransaction {
 
 
 
-    public void auxOmidPut(Transaction tx, String rowkey, String table, Map<Integer, String> values) throws IOException {
+    public void auxOmidPut(Transaction tx, HConnection conn, String rowkey, String table, Map<Integer, String> values) throws IOException {
         Put put = new Put(Bytes.toBytes(rowkey));
         TpcE tpce = new TpcE();
         Map<Integer, byte[]> aux = tpce.tablesColumns.get(table);
@@ -225,17 +223,19 @@ public class TpcTransaction {
             for (Integer k : values.keySet())
                 put.addColumn(tpce.family, aux.get(k), Bytes.toBytes(values.get(k)));
 
-            TTable tTable = new TTable(table);
+            //TTable tTable = new TTable(table);
+            TTable tTable = new TTable(conn.getTable(table), conn.getTable(table));
             tTable.put(tx, put);
         }
     }
 
-    private void auxOmidDelete(Transaction tx, String rowkey, String table) throws IOException {
+    private void auxOmidDelete(Transaction tx, HConnection conn, String rowkey, String table) throws IOException {
         Delete delete = new Delete(Bytes.toBytes(rowkey));
         TpcE tpce = new TpcE();
 
         if (tx!=null){
-            TTable tTable = new TTable(table);
+            //TTable tTable = new TTable(table);
+            TTable tTable = new TTable(conn.getTable(table), conn.getTable(table));
             tTable.delete(tx, delete);
         }
     }
@@ -247,7 +247,7 @@ public class TpcTransaction {
         return String.join("_", list);
     }
 
-    public void omidTransaction(Transaction tx) throws IOException {
+    public void omidTransaction(Transaction tx, HConnection conn) throws IOException {
 
         TpcE tpcE = new TpcE();
         transactionMode = true;
@@ -257,15 +257,15 @@ public class TpcTransaction {
 
             switch (write.getStatement()){
                 case DELETE:
-                    auxOmidDelete(tx, rowkey, write.getTable());
+                    auxOmidDelete(tx, conn, rowkey, write.getTable());
                     break;
 
                 case INSERT:
-                    auxOmidPut(tx, rowkey, write.getTable(), values);
+                    auxOmidPut(tx, conn, rowkey, write.getTable(), values);
                     break;
 
                 case UPDATE:
-                    auxOmidPut(tx, rowkey, write.getTable(), values);
+                    auxOmidPut(tx, conn, rowkey, write.getTable(), values);
                     break;
 
                 default:

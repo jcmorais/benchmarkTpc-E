@@ -7,6 +7,8 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.client.Connection;
 import org.apache.hadoop.hbase.client.ConnectionFactory;
+import org.apache.hadoop.hbase.client.HConnection;
+import org.apache.hadoop.hbase.client.HConnectionManager;
 import org.apache.omid.transaction.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +35,7 @@ public class Runner implements Runnable{
     TransactionManager tm;
 
     Connection conn;
+    HConnection hconn;
 
     ScheduledExecutorService executorService;
 
@@ -61,6 +64,7 @@ public class Runner implements Runnable{
         try {
             HBaseOmidClientConfiguration omidClientConfiguration = new HBaseOmidClientConfiguration();
             tm = HBaseTransactionManager.newInstance(omidClientConfiguration);
+            hconn = HConnectionManager.createConnection(HBaseConfiguration.create());
         } catch (Exception e) {
             logger.error("fail load omidClientConfiguration: {}", e.getMessage());
         }
@@ -119,7 +123,7 @@ public class Runner implements Runnable{
             tpcTx.setExpectedStartRun(diff + startTimeEntry);
 
             if(tpcConfig.isTransactions())
-                txProcessor = new TransactionProcessor(tpcTx, tm, counter);
+                txProcessor = new TransactionProcessor(tpcTx, hconn, tm, counter);
             else
                 txProcessor = new TransactionProcessor(tpcTx, conn,  counter);
 
