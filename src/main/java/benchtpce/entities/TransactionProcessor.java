@@ -1,7 +1,6 @@
 package benchtpce.entities;
 
 import benchtpce.common.ThreadCounter;
-import org.apache.hadoop.hbase.client.Connection;
 import org.apache.hadoop.hbase.client.HConnection;
 import org.apache.omid.transaction.RollbackException;
 import org.apache.omid.transaction.Transaction;
@@ -18,23 +17,22 @@ import java.util.concurrent.TimeUnit;
 public class TransactionProcessor implements Runnable{
     private TpcTransaction tpcTransaction;
     private TransactionManager tm;
-    Connection conn;
-    HConnection hconn;
+    HConnection conn;
     private ThreadCounter counter;
 
     private boolean transactionMode;
 
     private static final Logger LOG = LoggerFactory.getLogger(TransactionProcessor.class);
 
-    public TransactionProcessor(TpcTransaction tx, HConnection hconn, TransactionManager tm, ThreadCounter counter) {
+    public TransactionProcessor(TpcTransaction tx, HConnection conn, TransactionManager tm, ThreadCounter counter) {
         this.tpcTransaction = tx;
         this.tm = tm;
         this.counter = counter;
         this.transactionMode = true;
-        this.hconn = hconn;
+        this.conn = conn;
     }
 
-    public TransactionProcessor(TpcTransaction tpcTransaction, Connection conn, ThreadCounter counter) {
+    public TransactionProcessor(TpcTransaction tpcTransaction, HConnection conn, ThreadCounter counter) {
         this.tpcTransaction = tpcTransaction;
         this.conn = conn;
         this.counter = counter;
@@ -81,7 +79,7 @@ public class TransactionProcessor implements Runnable{
             }
 
             if(transactionMode) {
-                tpcTransaction.omidTransaction(tx, hconn);
+                tpcTransaction.omidTransaction(tx, conn);
                 workTime = System.currentTimeMillis()-start-beginTime-sleepTime;
                 this.tpcTransaction.setWorkTime(workTime);
                 LOG.debug("Tx:{} - work done in {} ms",tx.getTransactionId(), workTime);

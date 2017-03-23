@@ -5,14 +5,11 @@ import benchtpce.common.TpcConfig;
 import benchtpce.entities.*;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
-import org.apache.hadoop.hbase.client.Connection;
-import org.apache.hadoop.hbase.client.ConnectionFactory;
 import org.apache.hadoop.hbase.client.HConnection;
 import org.apache.hadoop.hbase.client.HConnectionManager;
 import org.apache.omid.transaction.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import benchtpce.tpce.HBaseTables;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -34,8 +31,7 @@ public class Runner implements Runnable{
 
     TransactionManager tm;
 
-    Connection conn;
-    HConnection hconn;
+    HConnection conn;
 
     ScheduledExecutorService executorService;
 
@@ -52,36 +48,22 @@ public class Runner implements Runnable{
 
     @Override
     public void run(){
-        if(tpcConfig.isTransactions())
-            runOmidTransactions();
-        else
-            runHbase();
-    }
-
-
-
-    public void runOmidTransactions(){
+        Configuration config = HBaseConfiguration.create();
         try {
-            HBaseOmidClientConfiguration omidClientConfiguration = new HBaseOmidClientConfiguration();
-            tm = HBaseTransactionManager.newInstance(omidClientConfiguration);
-            hconn = HConnectionManager.createConnection(HBaseConfiguration.create());
-        } catch (Exception e) {
-            logger.error("fail load omidClientConfiguration: {}", e.getMessage());
-        }
-
-        this.runTrace();
-    }
-
-
-    public void runHbase(){
-        try {
-            Configuration config = HBaseConfiguration.create();
-            conn = ConnectionFactory.createConnection(config);
+            conn = HConnectionManager.createConnection(config);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("fail to create HConnection: {}", e.getMessage());
         }
 
-        this.runTrace();
+        if(tpcConfig.isTransactions()) {
+            try {
+                tm = HBaseTransactionManager.newInstance();
+            } catch (Exception e) {
+                logger.error("fail load omidClientConfiguration: {}", e.getMessage());
+            }
+        }
+
+        runTrace();
     }
 
 
@@ -123,9 +105,9 @@ public class Runner implements Runnable{
             tpcTx.setExpectedStartRun(diff + startTimeEntry);
 
             if(tpcConfig.isTransactions())
-                txProcessor = new TransactionProcessor(tpcTx, hconn, tm, counter);
+                txProcessor = new TransactionProcessor(tpcTx, conn, tm, counter);
             else
-                txProcessor = new TransactionProcessor(tpcTx, conn,  counter);
+                txProcessor = new TransactionProcessor(tpcTx, conn, counter);
 
             executorService.schedule(txProcessor, sleep, TimeUnit.MILLISECONDS);
             transactionsList.add(txProcessor);

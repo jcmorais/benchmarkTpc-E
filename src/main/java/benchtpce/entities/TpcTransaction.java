@@ -180,16 +180,16 @@ public class TpcTransaction {
     }
 
 
-    public void auxHBasePut(Connection conn, String rowkey, String table, Map<Integer, String> values) throws IOException {
-        Table t = null;
+    public void auxHBasePut(HConnection conn, String rowkey, String table, Map<Integer, String> values) throws IOException {
+        HTable t = null;
         try {
-            t = conn.getTable(TableName.valueOf(table));
+            t = (HTable) conn.getTable(table);
             Put put = new Put(Bytes.toBytes(rowkey));
             TpcE tpce = new TpcE();
             Map<Integer, byte[]> aux = tpce.tablesColumns.get(table);
 
             for (Integer k : values.keySet())
-                put.addColumn(tpce.family, aux.get(k), Bytes.toBytes(values.get(k)));
+                put.add(tpce.family, aux.get(k), Bytes.toBytes(values.get(k)));
 
             t.put(put);
 
@@ -200,10 +200,10 @@ public class TpcTransaction {
     }
 
 
-    private void auxHBaseDelete(Connection conn, String rowkey, String table, Map<Integer, String> values) throws IOException {
-        Table t = null;
+    private void auxHBaseDelete(HConnection conn, String rowkey, String table, Map<Integer, String> values) throws IOException {
+        HTable t = null;
         try {
-            t = conn.getTable(TableName.valueOf(table));
+            t = (HTable) conn.getTable(table);
             Delete delete = new Delete(Bytes.toBytes(rowkey));
             t.delete(delete);
         }
@@ -221,7 +221,7 @@ public class TpcTransaction {
 
         if (tx!=null){
             for (Integer k : values.keySet())
-                put.addColumn(tpce.family, aux.get(k), Bytes.toBytes(values.get(k)));
+                put.add(tpce.family, aux.get(k), Bytes.toBytes(values.get(k)));
 
             //TTable tTable = new TTable(table);
             TTable tTable = new TTable(conn.getTable(table), conn.getTable(table));
@@ -278,7 +278,7 @@ public class TpcTransaction {
 
 
 
-    public void noTrasaction(Connection conn) throws IOException {
+    public void noTrasaction(HConnection conn) throws IOException {
         TpcE tpcE = new TpcE();
         for (Write write : entry.getWriteset()) {
             Map<Integer, String> values = write.getValues();
