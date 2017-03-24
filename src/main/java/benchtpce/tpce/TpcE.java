@@ -86,6 +86,14 @@ public class TpcE {
     public static byte[] family = Bytes.toBytes("table");
 
 
+    //Tpc-E Transactions
+    public static final String DATA_MAINTENANCE = "DATA_MAINTENANCE";
+    public static final String MARKET_FEED = "MARKET_FEED";
+    public static final String TRADE_ORDER = "TRADE_ORDER";
+    public static final String TRADE_UPDATE = "TRADE_UPDATE";
+    public static final String TRADE_RESULT = "TRADE_RESULT";
+
+
     public TpcE() {
         tablePositions = new HashMap<>();
         tableKeys = new HashMap<>();

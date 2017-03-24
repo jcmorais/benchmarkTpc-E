@@ -1,12 +1,16 @@
 package benchtpce.entities;
 
+import benchtpce.tpce.TpcE;
+
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by carlosmorais on 21/02/2017.
@@ -24,9 +28,17 @@ public class BenchMetrics {
 
     private String name; //the name of de in/out file
 
+    private Map<String, TransactionMetrics> transactionMetrics;
+
 
     public BenchMetrics(String name) {
         this.name = name;
+        transactionMetrics = new HashMap<>();
+        transactionMetrics.put(TpcE.MARKET_FEED, new TransactionMetrics(TpcE.MARKET_FEED));
+        transactionMetrics.put(TpcE.TRADE_RESULT, new TransactionMetrics(TpcE.TRADE_RESULT));
+        transactionMetrics.put(TpcE.DATA_MAINTENANCE, new TransactionMetrics(TpcE.DATA_MAINTENANCE));
+        transactionMetrics.put(TpcE.TRADE_ORDER, new TransactionMetrics(TpcE.TRADE_ORDER));
+        transactionMetrics.put(TpcE.TRADE_UPDATE, new TransactionMetrics(TpcE.TRADE_UPDATE));
     }
 
     public long execInMS(){
@@ -116,14 +128,18 @@ public class BenchMetrics {
         TpcTransaction tx;
         for (TransactionProcessor tp : transactionsList) {
             tx = tp.getTpcTransaction();
+            transactionMetrics.get(tx.getType()).incTotal();
             if(!tx.isTransactionMode())
                 execTimeTotal += tx.getExecTime();
             else if(tx.isCommit() ) {
                 execTimeTotal += tx.getExecTime();
                 incCommmit();
+                transactionMetrics.get(tx.getType()).incCommmit();
             }
-            else if (tx.isAbort())
+            else if (tx.isAbort()) {
                 incAbort();
+                transactionMetrics.get(tx.getType()).incAbort();
+            }
         }
         average();
 
@@ -139,6 +155,10 @@ public class BenchMetrics {
             BufferedWriter writer = Files.newBufferedWriter(path);
 
             writer.write(shortMetrics());
+
+            for (TransactionMetrics metrics : transactionMetrics.values()) {
+                writer.write(metrics.shortMetrics());
+            }
 
             for (TransactionProcessor transactionProcessor : transactionsList) {
                 TpcTransaction t = transactionProcessor.getTpcTransaction();
