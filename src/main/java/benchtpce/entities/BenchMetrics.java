@@ -179,10 +179,6 @@ public class BenchMetrics {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
-
-
     }
 
 
@@ -194,6 +190,7 @@ public class BenchMetrics {
 
         StringBuilder sb = new StringBuilder();
 
+        sb.append("logfile: "+name+": ");
         sb.append("start: "+millisToReadbleString(start));
         sb.append(", end: "+millisToReadbleString(end));
         sb.append(" ;\n");
