@@ -180,19 +180,21 @@ public class TpcTransaction {
     }
 
 
-    public void auxHBasePut(HConnection conn, String rowkey, String table, Map<Integer, String> values) throws IOException {
+    public void auxHBasePut(HConnection conn, String rowkey, String table, Map<Integer, String> writes) throws IOException {
         HTable t = null;
         try {
             t = (HTable) conn.getTable(table);
             Put put = new Put(Bytes.toBytes(rowkey));
             TpcE tpce = new TpcE();
             Map<Integer, byte[]> aux = tpce.tablesColumns.get(table);
+            List<Integer> keys = tpce.tableKeys.get(table);
 
-            for (Integer k : values.keySet())
-                put.add(tpce.family, aux.get(k), Bytes.toBytes(values.get(k)));
+            for (Integer k : writes.keySet()) {
+                if( !keys.contains(k) ) //Only puts if it does not belong to the primary key
+                    put.add(tpce.family, aux.get(k), Bytes.toBytes(writes.get(k)));
+            }
 
             t.put(put);
-
         }
         finally {
             if (t!=null) t.close();
@@ -214,14 +216,17 @@ public class TpcTransaction {
 
 
 
-    public void auxOmidPut(Transaction tx, HConnection conn, String rowkey, String table, Map<Integer, String> values) throws IOException {
+    public void auxOmidPut(Transaction tx, HConnection conn, String rowkey, String table, Map<Integer, String> writes) throws IOException {
         Put put = new Put(Bytes.toBytes(rowkey));
         TpcE tpce = new TpcE();
         Map<Integer, byte[]> aux = tpce.tablesColumns.get(table);
+        List<Integer> keys = tpce.tableKeys.get(table);
 
         if (tx!=null){
-            for (Integer k : values.keySet())
-                put.add(tpce.family, aux.get(k), Bytes.toBytes(values.get(k)));
+            for (Integer k : writes.keySet()) {
+                if( !keys.contains(k) ) //Only puts if it does not belong to the primary key
+                    put.add(tpce.family, aux.get(k), Bytes.toBytes(writes.get(k)));
+            }
 
             //TTable tTable = new TTable(table);
             TTable tTable = new TTable(conn.getTable(table), conn.getTable(table));
@@ -252,20 +257,21 @@ public class TpcTransaction {
         TpcE tpcE = new TpcE();
         transactionMode = true;
         for (Write write : entry.getWriteset()) {
-            Map<Integer, String> values = write.getValues();
-            String rowkey = makeRowkey(tpcE.tableKeys.get(write.getTable()), values);
+            Map<Integer, String> writeValues = write.getValues();
+            String table = write.getTable();
+            String rowkey = makeRowkey(tpcE.tableKeys.get(write.getTable()), writeValues);
 
             switch (write.getStatement()){
                 case DELETE:
-                    auxOmidDelete(tx, conn, rowkey, write.getTable());
+                    auxOmidDelete(tx, conn, rowkey, table);
                     break;
 
                 case INSERT:
-                    auxOmidPut(tx, conn, rowkey, write.getTable(), values);
+                    auxOmidPut(tx, conn, rowkey, table, writeValues);
                     break;
 
                 case UPDATE:
-                    auxOmidPut(tx, conn, rowkey, write.getTable(), values);
+                    auxOmidPut(tx, conn, rowkey, table, writeValues);
                     break;
 
                 default:
@@ -281,20 +287,21 @@ public class TpcTransaction {
     public void noTrasaction(HConnection conn) throws IOException {
         TpcE tpcE = new TpcE();
         for (Write write : entry.getWriteset()) {
-            Map<Integer, String> values = write.getValues();
-            String rowkey = makeRowkey(tpcE.tableKeys.get(write.getTable()), values);
+            Map<Integer, String> writeValues = write.getValues();
+            String table = write.getTable();
+            String rowkey = makeRowkey(tpcE.tableKeys.get(write.getTable()), writeValues);
 
             switch (write.getStatement()){
                 case DELETE:
-                    auxHBaseDelete(conn, rowkey, write.getTable(), values);
+                    auxHBaseDelete(conn, rowkey, table, writeValues);
                     break;
 
                 case INSERT:
-                    auxHBasePut(conn, rowkey, write.getTable(), values);
+                    auxHBasePut(conn, rowkey, table, writeValues);
                     break;
 
                 case UPDATE:
-                    auxHBasePut(conn, rowkey, write.getTable(), values);
+                    auxHBasePut(conn, rowkey, table, writeValues);
                     break;
 
                 default:
