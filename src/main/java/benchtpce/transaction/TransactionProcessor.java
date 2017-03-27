@@ -1,6 +1,7 @@
-package benchtpce.entities;
+package benchtpce.transaction;
 
 import benchtpce.common.ThreadCounter;
+import benchtpce.trace.Entry;
 import org.apache.hadoop.hbase.client.HConnection;
 import org.apache.omid.transaction.RollbackException;
 import org.apache.omid.transaction.Transaction;

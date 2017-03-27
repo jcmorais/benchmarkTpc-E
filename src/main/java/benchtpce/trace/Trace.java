@@ -1,4 +1,4 @@
-package benchtpce.entities;
+package benchtpce.trace;
 
 import java.io.Serializable;
 import java.util.Set;
@@ -9,9 +9,6 @@ import java.util.Set;
 public class Trace implements Serializable{
     private Set<Entry> entrys;
     private String filename;
-
-    public Trace() {
-    }
 
     public Trace(Set<Entry> entrys) {
         this.entrys = entrys;
@@ -31,22 +28,6 @@ public class Trace implements Serializable{
 
     public void setEntrys(Set<Entry> entrys) {
         this.entrys = entrys;
-    }
-
-    public long getSamllerTimestampInMS(){
-        //todo Stream/ParallelStream
-        long small = -1;
-        boolean first = true;
-        for (Entry entry : this.entrys) {
-            long timestamp = entry.getStartTimestamMS();
-            if(first){
-                small = timestamp;
-                first = false;
-            }
-            else if(small > timestamp)
-                small = timestamp;
-        }
-        return small;
     }
 
 

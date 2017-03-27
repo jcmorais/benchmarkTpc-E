@@ -2,7 +2,10 @@ package benchtpce.runners;
 
 import benchtpce.common.ThreadCounter;
 import benchtpce.common.TpcConfig;
-import benchtpce.entities.*;
+import benchtpce.metrics.BenchMetrics;
+import benchtpce.trace.*;
+import benchtpce.transaction.TpcTransaction;
+import benchtpce.transaction.TransactionProcessor;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.client.HConnection;
@@ -73,18 +76,19 @@ public class Runner implements Runnable{
 
         ThreadCounter counter = new ThreadCounter();
         Iterator<Entry> it = trace.getEntrys().iterator();
-        long currentTime = 0, startTimeEntry = 0, diff = 0, time = 0, sleep=0;
+        long currentTime = 0, startTimeEntry = 0, diff = 0, sleep=0;
         Entry entry = new Entry();
         TransactionProcessor txProcessor;
         TpcTransaction tpcTx;
         List<TransactionProcessor> transactionsList = new ArrayList<>();
         List<ScheduledFuture<?>> futereList = new ArrayList<>();
         boolean first = true; // if is the first transaction
+        boolean allTypeTransactions = tpcConfig.isAllTypeTransactions();
+        List<String> allowedTx = tpcConfig.getAllowedTransactions();
 
         executorService = Executors.newScheduledThreadPool(tpcConfig.getThreadPool());
 
         //Metrics
-        benchMetrics.setTotalTx(trace.getEntrys().size());
         benchMetrics.setStart(System.currentTimeMillis());
 
 
@@ -93,6 +97,9 @@ public class Runner implements Runnable{
             entry = it.next();
             currentTime = System.currentTimeMillis();
             startTimeEntry = entry.getStartTimestamMS();
+
+            if(allTypeTransactions && !allowedTx.contains(entry.getType()))
+                continue;
 
             if(first) {
                 diff = currentTime - startTimeEntry;
@@ -125,6 +132,7 @@ public class Runner implements Runnable{
         logger.info("end of executorService work");
 
         benchMetrics.setEnd(System.currentTimeMillis());
+        benchMetrics.setTotalTx(transactionsList.size());
 
         benchMetrics.calcMetrics(transactionsList);
         logger.info(benchMetrics.shortMetrics());

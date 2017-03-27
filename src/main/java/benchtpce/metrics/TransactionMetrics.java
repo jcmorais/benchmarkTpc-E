@@ -1,4 +1,4 @@
-package benchtpce.entities;
+package benchtpce.metrics;
 
 /**
  * Created by carlosmorais on 24/03/2017.

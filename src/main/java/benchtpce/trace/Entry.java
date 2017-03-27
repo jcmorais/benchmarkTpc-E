@@ -1,4 +1,4 @@
-package benchtpce.entities;
+package benchtpce.trace;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -125,7 +125,7 @@ public class Entry implements Serializable, Comparable<Entry> {
 
     @Override
     public String toString() {
-        return "Entry{" +
+        return "\nEntry{" +
                 "id=" + id +
                 ", startTimestamp='" + startTimestamp + '\'' +
                 ", startTimestampMS=" + startTimestampMS +

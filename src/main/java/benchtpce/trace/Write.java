@@ -1,4 +1,4 @@
-package benchtpce.entities;
+package benchtpce.trace;
 
 import java.io.Serializable;
 import java.util.HashMap;

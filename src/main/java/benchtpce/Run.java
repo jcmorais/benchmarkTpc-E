@@ -3,7 +3,7 @@ package benchtpce;
 import benchtpce.runners.Runner;
 import benchtpce.common.TpcConfig;
 
-import benchtpce.entities.*;
+import benchtpce.trace.*;
 import benchtpce.tpce.HBaseTables;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;

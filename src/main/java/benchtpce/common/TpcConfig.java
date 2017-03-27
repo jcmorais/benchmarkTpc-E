@@ -16,10 +16,13 @@ public class TpcConfig {
     private boolean loadFromXML;
     private boolean loadFromSerialized;
     private boolean transactions;
+    private boolean allTypeTransactions;
     private int threadPool;
 
     private String loadPath;
     private List<String> filesList;
+    private List<String> allowedTransactions;
+
 
     public TpcConfig() throws IOException {
         this(CONFIG_FILE_NAME);
@@ -27,6 +30,22 @@ public class TpcConfig {
 
     TpcConfig(String configFileName) throws IOException {
         new YAMLUtils().loadSettings(configFileName, configFileName, this);
+    }
+
+    public boolean isAllTypeTransactions() {
+        return allTypeTransactions;
+    }
+
+    public void setAllTypeTransactions(boolean allTypeTransactions) {
+        this.allTypeTransactions = allTypeTransactions;
+    }
+
+    public List<String> getAllowedTransactions() {
+        return allowedTransactions;
+    }
+
+    public void setAllowedTransactions(List<String> allowedTransactions) {
+        this.allowedTransactions = allowedTransactions;
     }
 
     public boolean isCreateTables() {

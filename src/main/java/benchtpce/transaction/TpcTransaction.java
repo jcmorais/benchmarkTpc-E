@@ -1,7 +1,7 @@
-package benchtpce.entities;
+package benchtpce.transaction;
 
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.hbase.TableName;
+import benchtpce.trace.Entry;
+import benchtpce.trace.Write;
 import org.apache.hadoop.hbase.client.*;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.omid.transaction.TTable;

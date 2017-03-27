@@ -1,6 +1,8 @@
-package benchtpce.entities;
+package benchtpce.metrics;
 
 import benchtpce.tpce.TpcE;
+import benchtpce.transaction.TpcTransaction;
+import benchtpce.transaction.TransactionProcessor;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -25,8 +27,9 @@ public class BenchMetrics {
 
     private long execTimeTotal; //Sum of the duration of all transactions
     private Double execTimeAvg; //Avg execution time of the transactions
+    private Double tps; //transactions per second
 
-    private String name; //the name of de in/out file
+    private String name; //the name of de input/output file
 
     private Map<String, TransactionMetrics> transactionMetrics;
 
@@ -110,6 +113,10 @@ public class BenchMetrics {
         execTimeAvg =  (((double) execTimeTotal /(double) totalTx)/(double)1000);
     }
 
+    private void tps(int size) {
+        tps = size / (((double) end-start)/1000);
+    }
+
 
     public String millisToReadbleString(long ms){
 
@@ -142,9 +149,11 @@ public class BenchMetrics {
             }
         }
         average();
+        tps(transactionsList.size());
 
         outPutMetrics(transactionsList);
     }
+
 
     private void outPutMetrics(List<TransactionProcessor> transactionsList)  {
         try  {
@@ -190,7 +199,7 @@ public class BenchMetrics {
 
         StringBuilder sb = new StringBuilder();
 
-        sb.append("logfile: "+name+": ");
+        sb.append("Logfile: "+name+" ;\n");
         sb.append("start: "+millisToReadbleString(start));
         sb.append(", end: "+millisToReadbleString(end));
         sb.append(" ;\n");
@@ -199,8 +208,9 @@ public class BenchMetrics {
         sb.append(", abortTx: "+abortsTx);
         sb.append(", abortRate: "+String.format("%.1f",(double)(abortsTx*100)/totalTx)+"%");
         sb.append(" ;\n");
-        sb.append("AVG(tx):"+String.format("%.3f",execTimeAvg)+"s");
-        sb.append(" ;\n\n");
+        sb.append("AVG: "+String.format("%.3f",execTimeAvg)+"s\n");
+        sb.append("TPS: "+String.format("%.3f",tps)+" tps");
+        sb.append("\n\n");
 
         return sb.toString();
     }

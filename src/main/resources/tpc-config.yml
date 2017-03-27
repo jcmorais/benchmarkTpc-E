@@ -17,5 +17,16 @@ loadPath: files/serialized/
 filesList:
   - binlog_1.dat
 
+allTypeTransactions: false
+
+allowedTransactions:
+  - TRADE_UPDATE
+  - DATA_MAINTENANCE
+  - MARKET_FEED
+  - TRADE_RESULT
+  - TRADE_ORDER
+
+
+
 threadPool: 35
 

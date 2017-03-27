@@ -1,11 +1,11 @@
 package benchtpce.parser;
 
-import benchtpce.entities.Trace;
+import benchtpce.trace.Trace;
 import com.google.common.io.Resources;
 import benchtpce.common.ObjectSerializable;
 import benchtpce.common.TpcConfig;
-import benchtpce.entities.Entry;
-import benchtpce.entities.Write;
+import benchtpce.trace.Entry;
+import benchtpce.trace.Write;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;

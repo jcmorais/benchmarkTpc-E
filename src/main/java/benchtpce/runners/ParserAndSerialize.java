@@ -2,7 +2,7 @@ package benchtpce.runners;
 
 
 import benchtpce.common.ObjectSerializable;
-import benchtpce.entities.Trace;
+import benchtpce.trace.Trace;
 import benchtpce.parser.Parser;
 
 /**
@@ -16,15 +16,11 @@ public class ParserAndSerialize {
         Trace trace;
         Parser parser = new Parser();
 
-        /*
+
+/*
         path = System.getProperty("user.dir") + "/src/main/resources/files/serialized/testeMini.dat";
         trace = parser.readXmlFile(System.getProperty("user.dir") + "/src/main/resources/files/original/testeMini");
         trace.setFilename("testeMini");
-        ObjectSerializable.ObjectToFile(trace, path);
-
-        path = System.getProperty("user.dir") + "/src/main/resources/files/serialized/testeMini.dat";
-        trace = parser.readXmlFile(System.getProperty("user.dir") + "/src/main/resources/files/original/testeMini");
-        trace.setFilename("testeMedium");
         ObjectSerializable.ObjectToFile(trace, path);
 
 
@@ -35,23 +31,23 @@ public class ParserAndSerialize {
 
 
         path = System.getProperty("user.dir") + "/src/main/resources/files/serialized/binlog_1.dat";
-        parser = new Parser();
         trace = parser.readXmlFile(System.getProperty("user.dir") + "/src/main/resources/files/original/binlog_1");
         trace.setFilename("binlog_1");
         ObjectSerializable.ObjectToFile(trace, path);
 
 
         path = System.getProperty("user.dir") + "/src/main/resources/files/serialized/binlog_2.dat";
-        parser = new Parser();
         trace = parser.readXmlFile(System.getProperty("user.dir") + "/src/main/resources/files/original/binlog_2");
         trace.setFilename("binlog_2");
         ObjectSerializable.ObjectToFile(trace, path);
+
 
 
         path = System.getProperty("user.dir") + "/src/main/resources/files/serialized/binlog_3.dat";
         trace = parser.readXmlFile(System.getProperty("user.dir") + "/src/main/resources/files/original/binlog_3");
         trace.setFilename("binlog_3");
         ObjectSerializable.ObjectToFile(trace, path);
+
 
 
         path = System.getProperty("user.dir") + "/src/main/resources/files/serialized/binlog_4.dat";
@@ -64,6 +60,7 @@ public class ParserAndSerialize {
         trace = parser.readXmlFile(System.getProperty("user.dir") + "/src/main/resources/files/original/binlog_5");
         trace.setFilename("binlog_5");
         ObjectSerializable.ObjectToFile(trace, path);
+
 
 
         path = System.getProperty("user.dir") + "/src/main/resources/files/serialized/binlog_6.dat";
@@ -82,6 +79,7 @@ public class ParserAndSerialize {
         trace = parser.readXmlFile(System.getProperty("user.dir") + "/src/main/resources/files/original/binlog_8");
         trace.setFilename("binlog_8");
         ObjectSerializable.ObjectToFile(trace, path);
+
 
 
         path = System.getProperty("user.dir") + "/src/main/resources/files/serialized/binlog_9.dat";
@@ -118,7 +116,6 @@ public class ParserAndSerialize {
         trace = parser.readXmlFile(System.getProperty("user.dir") + "/src/main/resources/files/original/binlog_14");
         trace.setFilename("binlog_14");
         ObjectSerializable.ObjectToFile(trace, path);
-
 
         path = System.getProperty("user.dir") + "/src/main/resources/files/serialized/binlog_15.dat";
         trace = parser.readXmlFile(System.getProperty("user.dir") + "/src/main/resources/files/original/binlog_15");
