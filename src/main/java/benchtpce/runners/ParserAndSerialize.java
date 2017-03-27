@@ -54,68 +54,81 @@ public class ParserAndSerialize {
         ObjectSerializable.ObjectToFile(trace, path);
 
 
-
-
         path = System.getProperty("user.dir") + "/src/main/resources/files/serialized/binlog_4.dat";
         trace = parser.readXmlFile(System.getProperty("user.dir") + "/src/main/resources/files/original/binlog_4");
         trace.setFilename("binlog_4");
         ObjectSerializable.ObjectToFile(trace, path);
 
 
-
         path = System.getProperty("user.dir") + "/src/main/resources/files/serialized/binlog_5.dat";
         trace = parser.readXmlFile(System.getProperty("user.dir") + "/src/main/resources/files/original/binlog_5");
+        trace.setFilename("binlog_5");
         ObjectSerializable.ObjectToFile(trace, path);
+
 
         path = System.getProperty("user.dir") + "/src/main/resources/files/serialized/binlog_6.dat";
         trace = parser.readXmlFile(System.getProperty("user.dir") + "/src/main/resources/files/original/binlog_6");
+        trace.setFilename("binlog_6");
         ObjectSerializable.ObjectToFile(trace, path);
-
 
 
         path = System.getProperty("user.dir") + "/src/main/resources/files/serialized/binlog_7.dat";
         trace = parser.readXmlFile(System.getProperty("user.dir") + "/src/main/resources/files/original/binlog_7");
+        trace.setFilename("binlog_7");
         ObjectSerializable.ObjectToFile(trace, path);
 
 
         path = System.getProperty("user.dir") + "/src/main/resources/files/serialized/binlog_8.dat";
         trace = parser.readXmlFile(System.getProperty("user.dir") + "/src/main/resources/files/original/binlog_8");
+        trace.setFilename("binlog_8");
         ObjectSerializable.ObjectToFile(trace, path);
+
 
         path = System.getProperty("user.dir") + "/src/main/resources/files/serialized/binlog_9.dat";
         trace = parser.readXmlFile(System.getProperty("user.dir") + "/src/main/resources/files/original/binlog_9");
+        trace.setFilename("binlog_9");
         ObjectSerializable.ObjectToFile(trace, path);
 
 
         path = System.getProperty("user.dir") + "/src/main/resources/files/serialized/binlog_10.dat";
         trace = parser.readXmlFile(System.getProperty("user.dir") + "/src/main/resources/files/original/binlog_10");
+        trace.setFilename("binlog_10");
         ObjectSerializable.ObjectToFile(trace, path);
+
 
         path = System.getProperty("user.dir") + "/src/main/resources/files/serialized/binlog_11.dat";
         trace = parser.readXmlFile(System.getProperty("user.dir") + "/src/main/resources/files/original/binlog_11");
+        trace.setFilename("binlog_11");
         ObjectSerializable.ObjectToFile(trace, path);
+
 
         path = System.getProperty("user.dir") + "/src/main/resources/files/serialized/binlog_12.dat";
         trace = parser.readXmlFile(System.getProperty("user.dir") + "/src/main/resources/files/original/binlog_12");
+        trace.setFilename("binlog_12");
         ObjectSerializable.ObjectToFile(trace, path);
 
 
         path = System.getProperty("user.dir") + "/src/main/resources/files/serialized/binlog_13.dat";
         trace = parser.readXmlFile(System.getProperty("user.dir") + "/src/main/resources/files/original/binlog_13");
+        trace.setFilename("binlog_13");
         ObjectSerializable.ObjectToFile(trace, path);
 
 
         path = System.getProperty("user.dir") + "/src/main/resources/files/serialized/binlog_14.dat";
         trace = parser.readXmlFile(System.getProperty("user.dir") + "/src/main/resources/files/original/binlog_14");
+        trace.setFilename("binlog_14");
         ObjectSerializable.ObjectToFile(trace, path);
 
 
         path = System.getProperty("user.dir") + "/src/main/resources/files/serialized/binlog_15.dat";
         trace = parser.readXmlFile(System.getProperty("user.dir") + "/src/main/resources/files/original/binlog_15");
+        trace.setFilename("binlog_15");
         ObjectSerializable.ObjectToFile(trace, path);
+
 
         path = System.getProperty("user.dir") + "/src/main/resources/files/serialized/binlog_16.dat";
         trace = parser.readXmlFile(System.getProperty("user.dir") + "/src/main/resources/files/original/binlog_16");
+        trace.setFilename("binlog_16");
         ObjectSerializable.ObjectToFile(trace, path);
 */
 
