@@ -17,24 +17,27 @@ import java.util.Map;
 /**
  * Created by carlosmorais on 21/02/2017.
  */
-public class BenchMetrics {
-    private long start; //start time in MS
-    private long end; //end time in MS
+public abstract class Metrics {
+    protected long start; //start time in MS
+    protected long end; //end time in MS
 
-    private int totalTx;
-    private int abortsTx;
-    private int commitTx;
+    protected int totalTx;
+    protected int abortsTx;
+    protected int commitTx;
 
-    private long execTimeTotal; //Sum of the duration of all transactions
-    private Double execTimeAvg; //Avg execution time of the transactions
-    private Double tps; //transactions per second
+    protected long execTimeTotal; //Sum of the duration of all transactions
+    protected Double execTimeAvg; //Avg execution time of the transactions
+    protected Double tps; //transactions per second
 
-    private String name; //the name of de input/output file
+    protected String folderName;
+    protected String name; //the name of de input/output file
 
-    private Map<String, TransactionMetrics> transactionMetrics;
+    protected Map<String, TransactionMetrics> transactionMetrics;
 
 
-    public BenchMetrics(String name) {
+
+    public Metrics(String folderName, String name) {
+        this.folderName = folderName;
         this.name = name;
         transactionMetrics = new HashMap<>();
         transactionMetrics.put(TpcE.MARKET_FEED, new TransactionMetrics(TpcE.MARKET_FEED));
@@ -109,11 +112,11 @@ public class BenchMetrics {
     }
 
 
-    private void average(){
+    protected void average(){
         execTimeAvg =  (((double) execTimeTotal /(double) totalTx)/(double)1000);
     }
 
-    private void tps(int size) {
+    protected void tps() {
         tps = commitTx / (((double) end-start)/1000);
     }
 
@@ -131,66 +134,6 @@ public class BenchMetrics {
     }
 
 
-    public void calcMetrics(List<TransactionProcessor> transactionsList) {
-        TpcTransaction tx;
-        for (TransactionProcessor tp : transactionsList) {
-            tx = tp.getTpcTransaction();
-            transactionMetrics.get(tx.getType()).incTotal();
-            if(!tx.isTransactionMode())
-                execTimeTotal += tx.getExecTime();
-            else if(tx.isCommit() ) {
-                execTimeTotal += tx.getExecTime();
-                incCommmit();
-                transactionMetrics.get(tx.getType()).incCommmit();
-            }
-            else if (tx.isAbort()) {
-                incAbort();
-                transactionMetrics.get(tx.getType()).incAbort();
-            }
-        }
-        average();
-        tps(transactionsList.size());
-
-        outPutMetrics(transactionsList);
-    }
-
-
-    private void outPutMetrics(List<TransactionProcessor> transactionsList)  {
-        try  {
-            LocalTime now = LocalTime.now();
-
-            Path path = Paths.get("out/"+name+"_"+now.getHour()+":"+now.getMinute()+".txt");
-            Files.createDirectories(path.getParent());
-            BufferedWriter writer = Files.newBufferedWriter(path);
-
-            writer.write(shortMetrics());
-
-            for (TransactionMetrics metrics : transactionMetrics.values()) {
-                writer.write(metrics.shortMetrics());
-            }
-
-            for (TransactionProcessor transactionProcessor : transactionsList) {
-                TpcTransaction t = transactionProcessor.getTpcTransaction();
-                writer.write("Tx_"+(t.getId())+" ; " +
-                        " begin:"+(t.getBeginTime()/ 1000.0)+"s," +
-                        " sleep:"+(t.getSleepTime()/ 1000.0)+"s," +
-                        " work:"+(t.getWorkTime()/ 1000.0)+"s," +
-                        " commit:"+(t.getCommitTime()/ 1000.0)+"s  ; " +
-                        " execTimeTotal: "+(t.getExecTime() / 1000.0)+"s" +
-                        " log:"+(t.getEntry().execTimeInMS() / 1000.0)+"s ;" +
-                        " delay:"+(t.getDelay())+"ms ;" +
-                        "\n"
-                )
-                ;
-            }
-            writer.flush();
-            writer.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-
     public double getTxAvg() {
         return this.execTimeAvg;
     }
@@ -199,7 +142,7 @@ public class BenchMetrics {
 
         StringBuilder sb = new StringBuilder();
 
-        sb.append("Logfile: "+name+" ;\n");
+        sb.append("Name: "+name+" ;\n");
         sb.append("start: "+millisToReadbleString(start));
         sb.append(", end: "+millisToReadbleString(end));
         sb.append(" ;\n");

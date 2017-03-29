@@ -2,7 +2,8 @@ package benchtpce.runners;
 
 import benchtpce.common.ThreadCounter;
 import benchtpce.common.TpcConfig;
-import benchtpce.metrics.BenchMetrics;
+import benchtpce.metrics.Metrics;
+import benchtpce.metrics.TraceMetrics;
 import benchtpce.trace.*;
 import benchtpce.transaction.TpcTransaction;
 import benchtpce.transaction.TransactionProcessor;
@@ -18,15 +19,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * Created by carlosmorais on 24/02/2017.
  */
-public class Runner implements Runnable{
+public class Runner implements Callable{
     private static final Logger logger = LoggerFactory.getLogger(Runner.class);
 
     private Trace trace;
@@ -38,18 +36,18 @@ public class Runner implements Runnable{
 
     ScheduledExecutorService executorService;
 
-    BenchMetrics benchMetrics;
+    TraceMetrics metrics;
 
 
-    public Runner(Trace trace, TpcConfig tpcConfig) {
+    public Runner(Trace trace, TpcConfig tpcConfig, String folderName) {
         this.trace = trace;
         this.tpcConfig = tpcConfig;
-        this.benchMetrics = new BenchMetrics(trace.getFilename());
+        this.metrics = new TraceMetrics(folderName, trace.getFilename());
     }
 
 
 
-    @Override
+
     public void run(){
         Configuration config = HBaseConfiguration.create();
         try {
@@ -89,7 +87,7 @@ public class Runner implements Runnable{
         executorService = Executors.newScheduledThreadPool(tpcConfig.getThreadPool());
 
         //Metrics
-        benchMetrics.setStart(System.currentTimeMillis());
+        metrics.setStart(System.currentTimeMillis());
 
 
         //TpcTransaction Scheduling
@@ -131,11 +129,11 @@ public class Runner implements Runnable{
         }
         logger.info("end of executorService work");
 
-        benchMetrics.setEnd(System.currentTimeMillis());
-        benchMetrics.setTotalTx(transactionsList.size());
+        metrics.setEnd(System.currentTimeMillis());
+        metrics.setTotalTx(transactionsList.size());
 
-        benchMetrics.calcMetrics(transactionsList);
-        logger.info(benchMetrics.shortMetrics());
+        metrics.calcMetrics(transactionsList);
+        logger.info(metrics.shortMetrics());
 
     }
 
@@ -147,4 +145,9 @@ public class Runner implements Runnable{
     }
 
 
+    @Override
+    public TraceMetrics call() {
+        this.run();
+        return metrics;
+    }
 }

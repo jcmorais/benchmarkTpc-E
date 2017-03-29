@@ -15,7 +15,7 @@ loadFromSerialized: true
 loadPath: files/serialized/
 
 filesList:
-  - binlog_1.dat
+  - testeMini.dat
 
 allTypeTransactions: false
 

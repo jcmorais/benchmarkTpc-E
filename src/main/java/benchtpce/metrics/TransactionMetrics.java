@@ -21,13 +21,24 @@ public class TransactionMetrics {
     public void incAbort() {
         this.abortsTx++;
     }
+    public void incAbort(int abortsTx) {
+        this.abortsTx+=abortsTx;
+    }
 
     public void incCommmit() {
         this.commitTx++;
     }
 
+    public void getCommitTx(int commitTx) {
+        this.commitTx*=commitTx;
+    }
+
     public void incTotal() {
         this.totalTx++;
+    }
+
+    public void incTotal(int totalTx) {
+        this.totalTx+=totalTx;
     }
 
     public int getTotalTx() {

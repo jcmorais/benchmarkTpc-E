@@ -1,5 +1,7 @@
 package benchtpce;
 
+import benchtpce.metrics.BenchmarkMetrics;
+import benchtpce.metrics.TraceMetrics;
 import benchtpce.runners.Runner;
 import benchtpce.common.TpcConfig;
 
@@ -11,11 +13,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import benchtpce.parser.Parser;
 
+import javax.swing.*;
 import java.io.IOException;
+import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 
 /**
@@ -25,7 +28,10 @@ public class Run {
 
     private static final Logger logger = LoggerFactory.getLogger(Run.class);
 
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) throws IOException, InterruptedException, ExecutionException {
+
+        LocalTime now = LocalTime.now();
+        String folderName = now.getHour()+"_"+now.getMinute();
 
         //benchmark configuration
         TpcConfig tpcConfig = new TpcConfig();
@@ -48,16 +54,22 @@ public class Run {
         //benchtpce.Run
         logger.info("run benchmark with {} logs", tpcConfig.getFilesList());
         ExecutorService executor = Executors.newFixedThreadPool(traceList.size());
+        List<Future<TraceMetrics>> resultList = new ArrayList<>();
         for (Trace trace : traceList) {
-            executor.submit(() -> {
-                Runner runner = new Runner(trace, tpcConfig);
-                runner.run();
-            });
+            Runner runner = new Runner(trace, tpcConfig, folderName);
+            Future<TraceMetrics> result = executor.submit(runner);
+            resultList.add(result);
         }
-
 
         executor.shutdown();
         executor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
+
+        BenchmarkMetrics benchmarkMetrics = new BenchmarkMetrics(folderName, "benchmark");
+        List<TraceMetrics> list = new ArrayList<>();
+        for (Future<TraceMetrics> traceMetricsFuture : resultList) {
+            list.add(traceMetricsFuture.get());
+        }
+        benchmarkMetrics.calcMetrics(list);
 
         logger.info("The benchmark is finished.");
         System.exit(0);
