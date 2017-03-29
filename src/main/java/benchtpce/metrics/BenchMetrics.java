@@ -114,7 +114,7 @@ public class BenchMetrics {
     }
 
     private void tps(int size) {
-        tps = size / (((double) end-start)/1000);
+        tps = commitTx / (((double) end-start)/1000);
     }
 
 
