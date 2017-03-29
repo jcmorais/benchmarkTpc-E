@@ -29,8 +29,8 @@ public class TransactionMetrics {
         this.commitTx++;
     }
 
-    public void getCommitTx(int commitTx) {
-        this.commitTx*=commitTx;
+    public void incCommit(int commitTx) {
+        this.commitTx+=commitTx;
     }
 
     public void incTotal() {

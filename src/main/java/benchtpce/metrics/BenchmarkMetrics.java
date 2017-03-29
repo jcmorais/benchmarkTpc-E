@@ -46,7 +46,7 @@ public class BenchmarkMetrics extends Metrics {
                 TransactionMetrics tm = transactionMetrics.get(type);
                 TransactionMetrics tm2 = metric.transactionMetrics.get(type);
                 tm.incAbort(tm2.getAbortsTx());
-                tm.getCommitTx(tm2.getCommitTx());
+                tm.incCommit(tm2.getCommitTx());
                 tm.incTotal(tm2.getTotalTx());
                 transactionMetrics.put(type, tm);
             }
