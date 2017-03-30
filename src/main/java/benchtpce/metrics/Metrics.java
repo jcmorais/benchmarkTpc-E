@@ -113,7 +113,10 @@ public abstract class Metrics {
 
 
     protected void average(){
-        execTimeAvg =  (((double) execTimeTotal /(double) totalTx)/(double)1000);
+        if(execTimeTotal > 0 && totalTx >0)
+            execTimeAvg =  (((double) execTimeTotal /(double) totalTx)/(double)1000);
+        else
+            execTimeAvg = 0.0;
     }
 
     protected void tps() {
@@ -149,9 +152,12 @@ public abstract class Metrics {
         sb.append("totalTx: "+totalTx);
         sb.append(", commitTx: "+commitTx);
         sb.append(", abortTx: "+abortsTx);
-        sb.append(", abortRate: "+String.format("%.1f",(double)(abortsTx*100)/totalTx)+"%");
+        if(abortsTx>0)
+            sb.append(", abortRate: "+String.format("%.1f",(double)(abortsTx*100)/totalTx)+"%");
+        else
+            sb.append(", abortRate: 0%");
         sb.append(" ;\n");
-        sb.append("AVG: "+String.format("%.3f",execTimeAvg)+"s\n");
+        sb.append("AVG: "+String.format("%.3f",execTimeAvg)+" s\n");
         sb.append("TPS: "+String.format("%.3f",tps)+" tps");
         sb.append("\n\n");
 

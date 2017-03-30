@@ -64,7 +64,7 @@ public class Run {
         executor.shutdown();
         executor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
 
-        BenchmarkMetrics benchmarkMetrics = new BenchmarkMetrics(folderName, "benchmark");
+        BenchmarkMetrics benchmarkMetrics = new BenchmarkMetrics(folderName, "benchmark", tpcConfig);
         List<TraceMetrics> list = new ArrayList<>();
         for (Future<TraceMetrics> traceMetricsFuture : resultList) {
             list.add(traceMetricsFuture.get());

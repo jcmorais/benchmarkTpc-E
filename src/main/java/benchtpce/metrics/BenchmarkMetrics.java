@@ -1,5 +1,6 @@
 package benchtpce.metrics;
 
+import benchtpce.common.TpcConfig;
 import benchtpce.transaction.TpcTransaction;
 import benchtpce.transaction.TransactionProcessor;
 
@@ -15,8 +16,12 @@ import java.util.List;
  * Created by carlosmorais on 29/03/2017.
  */
 public class BenchmarkMetrics extends Metrics {
-    public BenchmarkMetrics(String folderName, String name) {
+
+    private TpcConfig tpcConfig;
+
+    public BenchmarkMetrics(String folderName, String name, TpcConfig tpcConfig) {
         super(folderName, name);
+        this.tpcConfig = tpcConfig;
     }
 
 
@@ -70,6 +75,7 @@ public class BenchmarkMetrics extends Metrics {
             BufferedWriter writer = Files.newBufferedWriter(path);
 
             writer.write(shortMetrics());
+            writer.write("logs: "+tpcConfig.getFilesList()+"\n\n");
 
             for (TransactionMetrics metrics : transactionMetrics.values()) {
                 writer.write(metrics.shortMetrics());
@@ -80,7 +86,5 @@ public class BenchmarkMetrics extends Metrics {
             e.printStackTrace();
         }
     }
-
-
 
 }
