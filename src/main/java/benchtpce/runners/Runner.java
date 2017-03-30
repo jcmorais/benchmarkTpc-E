@@ -39,10 +39,10 @@ public class Runner implements Callable{
     TraceMetrics metrics;
 
 
-    public Runner(Trace trace, TpcConfig tpcConfig, String folderName) {
+    public Runner(Trace trace, TpcConfig tpcConfig, String folderName, int number) {
         this.trace = trace;
         this.tpcConfig = tpcConfig;
-        this.metrics = new TraceMetrics(folderName, trace.getFilename());
+        this.metrics = new TraceMetrics(folderName, trace.getFilename()+"_"+number);
     }
 
 

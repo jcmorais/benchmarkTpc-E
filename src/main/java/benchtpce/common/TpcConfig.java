@@ -23,6 +23,9 @@ public class TpcConfig {
     private List<String> filesList;
     private List<String> allowedTransactions;
 
+    private int replicateTrace;
+    private long intervalBetweenReplicate;
+
 
     public TpcConfig() throws IOException {
         this(CONFIG_FILE_NAME);
@@ -104,6 +107,21 @@ public class TpcConfig {
         this.filesList = filesList;
     }
 
+    public int getReplicateTrace() {
+        return replicateTrace;
+    }
+
+    public void setReplicateTrace(int replicateTrace) {
+        this.replicateTrace = replicateTrace;
+    }
+
+    public long getIntervalBetweenReplicate() {
+        return intervalBetweenReplicate;
+    }
+
+    public void setIntervalBetweenReplicate(long intervalBetweenReplicate) {
+        this.intervalBetweenReplicate = intervalBetweenReplicate;
+    }
 
     @Override
     public String toString() {

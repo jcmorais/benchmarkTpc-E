@@ -26,6 +26,8 @@ allowedTransactions:
   - TRADE_RESULT
   - TRADE_ORDER
 
+replicateTrace: 1
+intervalBetweenReplicate: 0
 
 
 threadPool: 35

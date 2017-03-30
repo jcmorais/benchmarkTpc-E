@@ -53,12 +53,17 @@ public class Run {
 
         //benchtpce.Run
         logger.info("run benchmark with {} logs", tpcConfig.getFilesList());
-        ExecutorService executor = Executors.newFixedThreadPool(traceList.size());
+        int replicate = tpcConfig.getReplicateTrace();
+        ExecutorService executor = Executors.newFixedThreadPool(traceList.size() * replicate);
         List<Future<TraceMetrics>> resultList = new ArrayList<>();
-        for (Trace trace : traceList) {
-            Runner runner = new Runner(trace, tpcConfig, folderName);
-            Future<TraceMetrics> result = executor.submit(runner);
-            resultList.add(result);
+
+        for (int i = 0; i < replicate; i++) {
+            for (Trace trace : traceList) {
+                Runner runner = new Runner(trace, tpcConfig, folderName, i);
+                Future<TraceMetrics> result = executor.submit(runner);
+                resultList.add(result);
+            }
+            Thread.sleep(tpcConfig.getIntervalBetweenReplicate());
         }
 
         executor.shutdown();

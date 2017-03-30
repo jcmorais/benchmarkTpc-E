@@ -67,6 +67,8 @@ public class TraceMetrics extends Metrics {
             for (TransactionProcessor transactionProcessor : transactionsList) {
                 TpcTransaction t = transactionProcessor.getTpcTransaction();
                 writer.write("Tx_"+(t.getId())+" ; " +
+                        " type:"+t.getType()+
+                        " commit:"+t.isCommit()+
                         " begin:"+(t.getBeginTime()/ 1000.0)+"s," +
                         " sleep:"+(t.getSleepTime()/ 1000.0)+"s," +
                         " work:"+(t.getWorkTime()/ 1000.0)+"s," +
