@@ -28,6 +28,8 @@ public class TraceMetrics extends Metrics {
             tx = tp.getTpcTransaction();
 
             transactionMetrics.get(tx.getType()).incTotal();
+            delayTotal += tx.getDelay();
+
             if(!tx.isTransactionMode())
                 execTimeTotal += tx.getExecTime();
             else if(tx.isCommit() ) {
@@ -42,6 +44,7 @@ public class TraceMetrics extends Metrics {
         }
         average();
         tps();
+        delayAvg();
 
         outPutMetrics(transactionsList);
     }

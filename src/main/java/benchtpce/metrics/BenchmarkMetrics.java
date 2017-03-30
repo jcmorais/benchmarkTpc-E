@@ -47,6 +47,8 @@ public class BenchmarkMetrics extends Metrics {
             commitTx += metric.commitTx;
             totalTx += metric.totalTx;
 
+            delayTotal += metric.delayTotal;
+
             for (String type : metric.transactionMetrics.keySet()) {
                 TransactionMetrics tm = transactionMetrics.get(type);
                 TransactionMetrics tm2 = metric.transactionMetrics.get(type);
@@ -61,6 +63,8 @@ public class BenchmarkMetrics extends Metrics {
         average();
 
         tps();
+
+        delayAvg();
 
         outPutMetrics();
     }

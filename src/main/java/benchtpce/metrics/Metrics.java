@@ -34,6 +34,8 @@ public abstract class Metrics {
 
     protected Map<String, TransactionMetrics> transactionMetrics;
 
+    protected long delayTotal;
+    protected Double delayAvg;
 
 
     public Metrics(String folderName, String name) {
@@ -123,6 +125,10 @@ public abstract class Metrics {
         tps = commitTx / (((double) end-start)/1000);
     }
 
+    protected void delayAvg(){
+        delayAvg = (((double) delayTotal /(double) totalTx)/(double)1000);
+    }
+
 
     public String millisToReadbleString(long ms){
 
@@ -158,7 +164,8 @@ public abstract class Metrics {
             sb.append(", abortRate: 0%");
         sb.append(" ;\n");
         sb.append("AVG: "+String.format("%.3f",execTimeAvg)+" s\n");
-        sb.append("TPS: "+String.format("%.3f",tps)+" tps");
+        sb.append("TPS: "+String.format("%.3f",tps)+" tps\n");
+        sb.append("DELAY (avg): "+String.format("%.3f",delayAvg)+" s");
         sb.append("\n\n");
 
         return sb.toString();
