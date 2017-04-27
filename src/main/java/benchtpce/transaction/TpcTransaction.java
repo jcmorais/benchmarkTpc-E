@@ -195,7 +195,8 @@ public class TpcTransaction {
                     put.add(tpce.family, aux.get(k), Bytes.toBytes(writes.get(k)));
             }
 
-            t.put(put);
+            if(put.size()>0)
+                t.put(put);
         }
         finally {
             if (t!=null) t.close();
