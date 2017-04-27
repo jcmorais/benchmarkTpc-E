@@ -1,7 +1,8 @@
 
-#to-do warm
-# if false run only with HBase
-transactions: true
+
+#transactionMode: OMID
+#transactionMode: HBASE
+transactionMode: AJITTS
 
 #create HBase tables of TPC-E
 createTables: false

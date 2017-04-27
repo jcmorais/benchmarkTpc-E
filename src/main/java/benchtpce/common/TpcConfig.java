@@ -15,7 +15,6 @@ public class TpcConfig {
     private boolean createTables;
     private boolean loadFromXML;
     private boolean loadFromSerialized;
-    private boolean transactions;
     private boolean allTypeTransactions;
     private int threadPool;
 
@@ -26,6 +25,14 @@ public class TpcConfig {
     private int replicateTrace;
     private long intervalBetweenReplicate;
 
+    private String transactionMode;
+    public enum TRANSACTION_MODE {
+        HBASE,
+        OMID,
+        AJITTS
+    };
+
+
 
     public TpcConfig() throws IOException {
         this(CONFIG_FILE_NAME);
@@ -33,6 +40,18 @@ public class TpcConfig {
 
     TpcConfig(String configFileName) throws IOException {
         new YAMLUtils().loadSettings(configFileName, configFileName, this);
+    }
+
+    public TRANSACTION_MODE getTransactionModeEnum() {
+        return TpcConfig.TRANSACTION_MODE.valueOf(transactionMode);
+    }
+
+    public String getTransactionMode() {
+        return transactionMode;
+    }
+
+    public void setTransactionMode(String transactionMode) {
+        this.transactionMode = transactionMode;
     }
 
     public boolean isAllTypeTransactions() {
@@ -75,14 +94,6 @@ public class TpcConfig {
         this.loadFromSerialized = loadFromSerialized;
     }
 
-    public boolean isTransactions() {
-        return transactions;
-    }
-
-    public void setTransactions(boolean transactions) {
-        this.transactions = transactions;
-    }
-
     public int getThreadPool() {
         return threadPool;
     }
@@ -123,16 +134,21 @@ public class TpcConfig {
         this.intervalBetweenReplicate = intervalBetweenReplicate;
     }
 
+
     @Override
     public String toString() {
         return "TpcConfig{" +
                 "createTables=" + createTables +
                 ", loadFromXML=" + loadFromXML +
                 ", loadFromSerialized=" + loadFromSerialized +
-                ", transactions=" + transactions +
+                ", allTypeTransactions=" + allTypeTransactions +
                 ", threadPool=" + threadPool +
                 ", loadPath='" + loadPath + '\'' +
                 ", filesList=" + filesList +
+                ", allowedTransactions=" + allowedTransactions +
+                ", replicateTrace=" + replicateTrace +
+                ", intervalBetweenReplicate=" + intervalBetweenReplicate +
+                ", transactionMode='" + transactionMode + '\'' +
                 '}';
     }
 }

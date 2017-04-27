@@ -2,6 +2,7 @@ package benchtpce.transaction;
 
 import benchtpce.trace.Entry;
 import benchtpce.trace.Write;
+import client.TransactionAjitts;
 import org.apache.hadoop.hbase.client.*;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.omid.transaction.TTable;
@@ -310,6 +311,67 @@ public class TpcTransaction {
 
         }
     }
+
+    public void runTransaction(TransactionService tx, HConnection conn) {
+        transactionMode = true;
+
+        if (tx instanceof TransactionServiceAjitts){
+            //TransactionServiceAjitts t = (TransactionServiceAjitts) tx;
+            //ajittsTransaction(t.getTransaction());
+            try {
+                noTrasaction(conn);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        else if(tx instanceof TransactionServiceOmid){
+            TransactionServiceOmid t = (TransactionServiceOmid) tx;
+            try {
+                omidTransaction(t.getTransaction(), conn);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+    }
+
+    private void ajittsTransaction(TransactionAjitts transaction) {
+        TpcE tpcE = new TpcE();
+
+        for (Write write : entry.getWriteset()) {
+            Map<Integer, String> values = write.getValues();
+            String rowkey = makeRowkey(tpcE.tableKeys.get(write.getTable()), values);
+
+            switch (write.getStatement()){
+                case DELETE:
+                    auxAjittsDelete(transaction, rowkey, write.getTable());
+                    break;
+
+                case INSERT:
+                    auxAjittsPut(transaction, rowkey, write.getTable(), values);
+                    break;
+
+                case UPDATE:
+                    auxAjittsPut(transaction, rowkey, write.getTable(), values);
+                    break;
+
+                default:
+                    break;
+            }
+
+        }
+
+    }
+
+    private void auxAjittsPut(TransactionAjitts transaction, String rowkey, String table, Map<Integer, String> values) {
+        //TODO: 27/04/2017 implemets...
+    }
+
+    private void auxAjittsDelete(TransactionAjitts transaction, String rowkey, String table) {
+        //TODO: 27/04/2017 implemets...
+    }
+
 
 
 }

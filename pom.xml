@@ -30,9 +30,11 @@
 
 
     <build>
+
+
         <plugins>
 
-            <plugin>
+        <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.6.0</version>
@@ -65,12 +67,27 @@
                         </arguments>
                 </configuration>
             </plugin>
-
-
         </plugins>
     </build>
 
+
+
+
+
     <dependencies>
+
+        <dependency>
+            <groupId>pt.haslab.tm</groupId>
+            <artifactId>tm-ajjits</artifactId>
+            <version>0.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+            <version>4.1.9.Final</version>
+        </dependency>
+
         <dependency>
             <groupId>javax.xml.parsers</groupId>
             <artifactId>jaxp-api</artifactId>

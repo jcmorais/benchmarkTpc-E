@@ -1,6 +1,7 @@
 package benchtpce.transaction;
 
 import benchtpce.common.ThreadCounter;
+import benchtpce.common.TpcConfig;
 import benchtpce.trace.Entry;
 import org.apache.hadoop.hbase.client.HConnection;
 import org.apache.omid.transaction.RollbackException;
@@ -17,27 +18,37 @@ import java.util.concurrent.TimeUnit;
  */
 public class TransactionProcessor implements Runnable{
     private TpcTransaction tpcTransaction;
-    private TransactionManager tm;
+    TransactionManagerService tm;
     HConnection conn;
     private ThreadCounter counter;
 
-    private boolean transactionMode;
+    private String transactionMode;
+    private boolean useTM;
 
     private static final Logger LOG = LoggerFactory.getLogger(TransactionProcessor.class);
 
-    public TransactionProcessor(TpcTransaction tx, HConnection conn, TransactionManager tm, ThreadCounter counter) {
-        this.tpcTransaction = tx;
-        this.tm = tm;
-        this.counter = counter;
-        this.transactionMode = true;
-        this.conn = conn;
-    }
 
     public TransactionProcessor(TpcTransaction tpcTransaction, HConnection conn, ThreadCounter counter) {
         this.tpcTransaction = tpcTransaction;
         this.conn = conn;
         this.counter = counter;
-        this.transactionMode = false;
+        this.transactionMode = TpcConfig.TRANSACTION_MODE.HBASE.toString();;
+        this.useTM=false;
+        this.tm=null;
+    }
+
+    public TransactionProcessor(TpcTransaction tpcTx, HConnection conn, TransactionManagerService tm, ThreadCounter counter) {
+        this.tpcTransaction = tpcTx;
+        this.conn = conn;
+        this.counter = counter;
+        this.useTM=true;
+        this.tm=tm;
+
+        if(tm instanceof TransactionManagerServiceAjitts)
+            this.transactionMode = TpcConfig.TRANSACTION_MODE.AJITTS.toString();
+        else if (tm instanceof TransactionManagerServiceOmid)
+            this.transactionMode = TpcConfig.TRANSACTION_MODE.OMID.toString();
+
     }
 
     public TpcTransaction getTpcTransaction() {
@@ -51,13 +62,15 @@ public class TransactionProcessor implements Runnable{
             tpcTransaction.setStartRun(start);
             Entry entry = tpcTransaction.getEntry();
             counter.increment();
-            Transaction  tx = null;
-            if(transactionMode) {
+            TransactionService  tx = null;
+
+
+            if(useTM) {
                 tx = tm.begin();
-                tpcTransaction.setId(tx.getTransactionId());
+                tpcTransaction.setId(tx.id());
                 beginTime = System.currentTimeMillis()-start;
                 tpcTransaction.setBeginTime(beginTime);
-                LOG.debug("Tx:{} - begin done in {} ms",tx.getTransactionId(), beginTime);
+                LOG.debug("Tx:{} - begin done in {} ms",tx.id(), beginTime);
             }
 
 
@@ -67,7 +80,7 @@ public class TransactionProcessor implements Runnable{
                 long execTime = entry.execTimeInMS();
                 if(execTime >0)
                     TimeUnit.MILLISECONDS.sleep(execTime);
-                if(transactionMode){
+                if(useTM){
                     sleepTime = System.currentTimeMillis()-start-beginTime;
                     tpcTransaction.setSleepTime(sleepTime);
                 }
@@ -79,25 +92,26 @@ public class TransactionProcessor implements Runnable{
                 e.printStackTrace();
             }
 
-            if(transactionMode) {
-                tpcTransaction.omidTransaction(tx, conn);
+            if(useTM) {
+                tpcTransaction.runTransaction(tx, conn);
                 workTime = System.currentTimeMillis()-start-beginTime-sleepTime;
                 this.tpcTransaction.setWorkTime(workTime);
-                LOG.debug("Tx:{} - work done in {} ms",tx.getTransactionId(), workTime);
+                LOG.debug("Tx:{} - work done in {} ms",tx.id(), workTime);
             }
             else {
                 tpcTransaction.noTrasaction(conn);
                 workTime = System.currentTimeMillis()-start-sleepTime;
                 this.tpcTransaction.setWorkTime(workTime);
+                LOG.debug("Tx(HBase) work done in {} ms", workTime);
             }
             try {
-                if(transactionMode) {
+                if(useTM) {
                     tm.commit(tx);
                     long commitTime = System.currentTimeMillis()-start-beginTime-workTime-sleepTime;
                     tpcTransaction.setCommitTime(commitTime);
                     tpcTransaction.setExecTime(commitTime+beginTime+workTime+sleepTime);
                     tpcTransaction.setCommit(true);
-                    LOG.debug("Tx:{} - commit done in {} ms",tx.getTransactionId(), workTime);
+                    LOG.debug("Tx:{} - commit done in {} ms",tx.id(), workTime);
                 }
                 else
                     tpcTransaction.setExecTime(System.currentTimeMillis()-start);

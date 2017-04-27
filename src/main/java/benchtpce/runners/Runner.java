@@ -5,8 +5,7 @@ import benchtpce.common.TpcConfig;
 import benchtpce.metrics.Metrics;
 import benchtpce.metrics.TraceMetrics;
 import benchtpce.trace.*;
-import benchtpce.transaction.TpcTransaction;
-import benchtpce.transaction.TransactionProcessor;
+import benchtpce.transaction.*;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.client.HConnection;
@@ -30,7 +29,7 @@ public class Runner implements Callable{
     private Trace trace;
     private TpcConfig tpcConfig;
 
-    TransactionManager tm;
+    TransactionManagerService tm;
 
     HConnection conn;
 
@@ -46,9 +45,7 @@ public class Runner implements Callable{
     }
 
 
-
-
-    public void run(){
+    public void run() throws IOException, InterruptedException {
         Configuration config = HBaseConfiguration.create();
         try {
             conn = HConnectionManager.createConnection(config);
@@ -56,12 +53,20 @@ public class Runner implements Callable{
             logger.error("fail to create HConnection: {}", e.getMessage());
         }
 
-        if(tpcConfig.isTransactions()) {
-            try {
-                tm = HBaseTransactionManager.newInstance();
-            } catch (Exception e) {
-                logger.error("fail load omidClientConfiguration: {}", e.getMessage());
-            }
+
+        switch (tpcConfig.getTransactionModeEnum()) {
+            case OMID:
+                HBaseOmidClientConfiguration omidClientConfiguration = new HBaseOmidClientConfiguration();
+                TransactionManager tmOmid = HBaseTransactionManager.newInstance(omidClientConfiguration);
+                tm = new TransactionManagerServiceOmid(tmOmid);
+                break;
+            case HBASE:
+                break;
+            case AJITTS:
+                tm = new TransactionManagerServiceAjitts();
+                break;
+            default:
+                break;
         }
 
         runTrace();
@@ -75,8 +80,8 @@ public class Runner implements Callable{
         ThreadCounter counter = new ThreadCounter();
         Iterator<Entry> it = trace.getEntrys().iterator();
         long currentTime = 0, startTimeEntry = 0, diff = 0, sleep=0;
-        Entry entry = new Entry();
-        TransactionProcessor txProcessor;
+        Entry entry;
+        TransactionProcessor txProcessor=null;
         TpcTransaction tpcTx;
         List<TransactionProcessor> transactionsList = new ArrayList<>();
         List<ScheduledFuture<?>> futereList = new ArrayList<>();
@@ -109,10 +114,21 @@ public class Runner implements Callable{
             tpcTx = new TpcTransaction(entry);
             tpcTx.setExpectedStartRun(diff + startTimeEntry);
 
-            if(tpcConfig.isTransactions())
-                txProcessor = new TransactionProcessor(tpcTx, conn, tm, counter);
-            else
-                txProcessor = new TransactionProcessor(tpcTx, conn, counter);
+
+            switch (tpcConfig.getTransactionModeEnum()) {
+                case HBASE:
+                    txProcessor = new TransactionProcessor(tpcTx, conn, counter);
+                    break;
+                case OMID:
+                    txProcessor = new TransactionProcessor(tpcTx, conn, tm, counter);
+                    break;
+                case AJITTS:
+                    txProcessor = new TransactionProcessor(tpcTx, conn, tm, counter);
+                    break;
+                default:
+                    System.exit(0);
+                    break;
+            }
 
             executorService.schedule(txProcessor, sleep, TimeUnit.MILLISECONDS);
             transactionsList.add(txProcessor);
@@ -146,7 +162,7 @@ public class Runner implements Callable{
 
 
     @Override
-    public TraceMetrics call() {
+    public TraceMetrics call() throws IOException, InterruptedException {
         this.run();
         return metrics;
     }
