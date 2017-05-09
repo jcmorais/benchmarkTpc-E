@@ -9,6 +9,10 @@ import org.apache.omid.transaction.Transaction;
 import org.apache.omid.transaction.TransactionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import transaction.TransactionManagerService;
+import transaction.TransactionManagerServiceAjitts;
+import transaction.TransactionManagerServiceOmid;
+import transaction.TransactionService;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -62,7 +66,7 @@ public class TransactionProcessor implements Runnable{
             tpcTransaction.setStartRun(start);
             Entry entry = tpcTransaction.getEntry();
             counter.increment();
-            TransactionService  tx = null;
+            TransactionService tx = null;
 
 
             if(useTM) {

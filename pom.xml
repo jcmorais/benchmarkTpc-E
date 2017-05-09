@@ -76,9 +76,10 @@
 
     <dependencies>
 
+
         <dependency>
-            <groupId>pt.haslab.tm</groupId>
-            <artifactId>tm-ajjits</artifactId>
+            <groupId>pt.haslab.ajitts</groupId>
+            <artifactId>tm-interface</artifactId>
             <version>0.1</version>
         </dependency>
 

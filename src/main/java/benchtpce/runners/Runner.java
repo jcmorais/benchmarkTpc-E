@@ -13,6 +13,9 @@ import org.apache.hadoop.hbase.client.HConnectionManager;
 import org.apache.omid.transaction.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import transaction.TransactionManagerService;
+import transaction.TransactionManagerServiceAjitts;
+import transaction.TransactionManagerServiceOmid;
 
 import java.io.IOException;
 import java.util.ArrayList;

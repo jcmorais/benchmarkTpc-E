@@ -9,9 +9,11 @@ import benchtpce.trace.*;
 import benchtpce.tpce.HBaseTables;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
+import org.apache.omid.transaction.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import benchtpce.parser.Parser;
+import transaction.TransactionManagerService;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -29,6 +31,9 @@ public class Run {
     private static final Logger logger = LoggerFactory.getLogger(Run.class);
 
     public static void main(String[] args) throws IOException, InterruptedException, ExecutionException {
+
+
+        TransactionManagerService tm;
 
         LocalTime now = LocalTime.now();
         String folderName = now.getHour()+"_"+now.getMinute();
