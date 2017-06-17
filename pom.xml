@@ -30,11 +30,9 @@
 
 
     <build>
-
-
         <plugins>
 
-        <plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.6.0</version>
@@ -45,32 +43,34 @@
             </plugin>
 
 
+
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>1.6.0</version>
                 <executions>
                     <execution>
+                        <id>run</id>
                         <goals>
-                            <goal>exec</goal>
+                            <goal>java</goal>
                         </goals>
+                        <configuration>
+                            <mainClass>benchtpce.Run</mainClass>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>create</id>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>benchtpce.runners.CreateHBaseTables</mainClass>
+                        </configuration>
                     </execution>
                 </executions>
-                <configuration>
-                        <executable>java</executable>
-                        <arguments>
-                            <argument>-classpath</argument>
-                            <!-- automatically creates the classpath using all project dependencies,
-                                 also adding the project build directory -->
-                            <classpath/>
-                            <argument>benchtpce.Run</argument>
-                        </arguments>
-                </configuration>
             </plugin>
         </plugins>
     </build>
-
-
 
 
 

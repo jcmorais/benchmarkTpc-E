@@ -16,7 +16,22 @@ loadFromSerialized: true
 loadPath: files/serialized/
 
 filesList:
-  - testeMini.dat
+  - binlog_1.dat
+  - binlog_12.dat
+  - binlog_3.dat
+  - binlog_4.dat
+  - binlog_5.dat
+  - binlog_6.dat
+  - binlog_7.dat
+  - binlog_8.dat
+  - binlog_9.dat
+  - binlog_10.dat
+  - binlog_11.dat
+  - binlog_12.dat
+  - binlog_13.dat
+  - binlog_14.dat
+  - binlog_15.dat
+  - binlog_16.dat
 
 allTypeTransactions: false
 
