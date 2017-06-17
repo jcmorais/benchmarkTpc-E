@@ -2,7 +2,6 @@ package benchtpce.transaction;
 
 import benchtpce.trace.Entry;
 import benchtpce.trace.Write;
-import client.TransactionAjitts;
 import org.apache.hadoop.hbase.client.*;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.omid.transaction.TTable;
@@ -340,7 +339,7 @@ public class TpcTransaction {
 
     }
 
-    private void ajittsTransaction(TransactionAjitts transaction) {
+    private void ajittsTransaction(TransactionServiceAjitts transaction) {
         TpcE tpcE = new TpcE();
 
         for (Write write : entry.getWriteset()) {
@@ -368,11 +367,11 @@ public class TpcTransaction {
 
     }
 
-    private void auxAjittsPut(TransactionAjitts transaction, String rowkey, String table, Map<Integer, String> values) {
+    private void auxAjittsPut(TransactionServiceAjitts transaction, String rowkey, String table, Map<Integer, String> values) {
         //TODO: 27/04/2017 implemets...
     }
 
-    private void auxAjittsDelete(TransactionAjitts transaction, String rowkey, String table) {
+    private void auxAjittsDelete(TransactionServiceAjitts transaction, String rowkey, String table) {
         //TODO: 27/04/2017 implemets...
     }
 

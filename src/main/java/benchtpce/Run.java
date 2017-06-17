@@ -33,8 +33,6 @@ public class Run {
     public static void main(String[] args) throws IOException, InterruptedException, ExecutionException {
 
 
-        TransactionManagerService tm;
-
         LocalTime now = LocalTime.now();
         String folderName = now.getHour()+"_"+now.getMinute();
 

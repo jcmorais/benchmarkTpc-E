@@ -1,8 +1,8 @@
 
 
-#transactionMode: OMID
+transactionMode: OMID
 #transactionMode: HBASE
-transactionMode: AJITTS
+#transactionMode: AJITTS
 
 #create HBase tables of TPC-E
 createTables: false

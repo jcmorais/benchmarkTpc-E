@@ -122,6 +122,9 @@ public class TransactionProcessor implements Runnable{
             } catch (RollbackException e) {
                 tpcTransaction.setAbort(true);
                 LOG.debug("TpcTransaction {} ROLLBACK : {}", tx, e.getMessage());
+            } catch (hbase.RollbackException e) {
+                tpcTransaction.setAbort(true);
+                LOG.debug("TpcTransaction {} ROLLBACK : {}", tx, e.getMessage());
             }
         } catch (IOException e) {
             e.printStackTrace();
